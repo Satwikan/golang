@@ -6,13 +6,25 @@ import (
 	"strings"
 )
 
+type structureInGo struct {
+	memberOne   string
+	memberTwo   int
+	memberThree float32
+}
+
 func main() {
 	// to run externalFunc type
 	// go run main.go helper.go
 	// in command line
 	externalFunc()
-
 	customPackage.CustomPackageFunc()
+
+	var object = structureInGo{
+		memberOne:   "1",
+		memberTwo:   2,
+		memberThree: 3,
+	}
+	fmt.Println("object in go", object)
 
 	var conferenceName = "Go Conference"
 	const conferenceTickets = 50
@@ -68,7 +80,7 @@ func main() {
 	}
 
 	city := "London"
-
+	// switch in go
 	switch city {
 	case "New York":
 		// bookinLondon()
@@ -77,6 +89,9 @@ func main() {
 	case "Mumbai", "Jaipur":
 		// bookinJaipur()
 	}
+
+	var dictionary = make(map[string]int)
+	dictionary["key-0"] = 0
 }
 
 func greetUsers(conferenceName string) {
