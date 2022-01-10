@@ -4,6 +4,7 @@ import (
 	"booking-app/customPackage"
 	"fmt"
 	"strings"
+	"time"
 )
 
 type structureInGo struct {
@@ -32,8 +33,8 @@ func main() {
 	// slice (vector)
 	var bookings []string
 
-	// func
-	greetUsers(conferenceName)
+	// concurrent func (await)
+	go greetUsers(conferenceName)
 
 	fmt.Println("we have total off", conferenceTickets, " tickets with", remainingTickets, " tickets still available")
 	fmt.Println("Get your tickets here to attend")
@@ -58,9 +59,12 @@ func main() {
 
 		remainingTickets -= userTickets
 		bookings = append(bookings, userName)
-
-		fmt.Printf("you have booked %v ticket(s) by name of %v, you will receive your bill on %v\n", userTickets, userName, email)
-		fmt.Printf("%v ticket(s) reaming\n", remainingTickets)
+		// simulating real world ticket booking lag (3 seconds)
+		time.Sleep(3 * time.Second)
+		// save ticket as a string
+		var ticket = fmt.Sprintf("you have booked %v ticket(s) by name of %v, you will receive your bill on %v\n", userTickets, userName, email)
+		fmt.Println(ticket)
+		fmt.Printf("%v ticket(s) remaning\n", remainingTickets)
 
 		// syntactic sugar for slice declaration
 		firstNames := []string{}
