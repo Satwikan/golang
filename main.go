@@ -4,6 +4,7 @@ import (
 	"booking-app/customPackage"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -12,6 +13,8 @@ type structureInGo struct {
 	memberTwo   int
 	memberThree float32
 }
+
+var wg = sync.WaitGroup{}
 
 func main() {
 	// to run externalFunc type
@@ -33,8 +36,7 @@ func main() {
 	// slice (vector)
 	var bookings []string
 
-	// concurrent func (await)
-	go greetUsers(conferenceName)
+	greetUsers(conferenceName)
 
 	fmt.Println("we have total off", conferenceTickets, " tickets with", remainingTickets, " tickets still available")
 	fmt.Println("Get your tickets here to attend")
@@ -59,11 +61,12 @@ func main() {
 
 		remainingTickets -= userTickets
 		bookings = append(bookings, userName)
-		// simulating real world ticket booking lag (3 seconds)
-		time.Sleep(3 * time.Second)
-		// save ticket as a string
-		var ticket = fmt.Sprintf("you have booked %v ticket(s) by name of %v, you will receive your bill on %v\n", userTickets, userName, email)
-		fmt.Println(ticket)
+
+		// concurrent func (executes on seprate thread)
+		// but the main thread won't wait for any child thread to execute
+		// to avoid this wait group is used
+		wg.Add(1)
+		go sendTickets(userTickets, userName, email)
 		fmt.Printf("%v ticket(s) remaning\n", remainingTickets)
 
 		// syntactic sugar for slice declaration
@@ -96,8 +99,20 @@ func main() {
 
 	var dictionary = make(map[string]int)
 	dictionary["key-0"] = 0
+	// wait for all wait group threads to finish
+	wg.Wait()
 }
 
 func greetUsers(conferenceName string) {
 	fmt.Printf("Welcome to %v, Master\n", conferenceName)
+}
+
+func sendTickets(userTickets uint, userName string, email string) {
+	// simulating real world response time (10 seconds)
+	time.Sleep(10 * time.Second)
+	// save ticket as a string
+	var ticket = fmt.Sprintf("you have booked %v ticket(s) by name of %v, you will receive your bill on %v\n", userTickets, userName, email)
+	fmt.Println(ticket)
+	// Inform wait group that this function is executed
+	wg.Done()
 }
